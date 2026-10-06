@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* Karyalo design tokens — same names and values as Karyalo Manage / Storefront
+   (07_DESIGN/Design_System §11, brand blue). Dark navy is used for the hero and
+   footer only; the catalogue rows sit on warm white, per the design system's
+   "no fully dark pages" rule. */
+@theme {
+  --color-deep-pine: #1e2f5c;
+  --color-night: #111b36;
+  --color-karyalo-green: #1e5aa8;
+  --color-accent-cyan: #2fc1d6;
+  --color-ink: #1c2430;
+  --color-muted: #5b6472;
+  --color-warm-white: #fcfbf7;
+  --color-soft-sand: #f4f1ea;
+  --color-soft-sage: #e8f1fa;
+  --color-terracotta: #a5482d;
+  --color-terracotta-soft: #f2d9c8;
+  --color-border: #dce2ea;
+  --color-status-success: #1c7a4d;
+  --color-status-critical: #b3261e;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-warm-white);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-karyalo-green);
+  outline-offset: 2px;
+}
+
+.row-scroller {
+  scrollbar-width: none;
+}
+.row-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
