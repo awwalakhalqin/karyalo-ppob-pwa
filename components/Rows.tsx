@@ -11,7 +11,7 @@ import { ProductArt } from "@/components/ProductArt";
  * A horizontally scrolling shelf — the core of a streaming catalogue page.
  * Arrows page by one screen width on pointer devices; touch scrolls natively.
  */
-export function Row({ id, title, href, children }: { id?: string; title: string; href?: string; children: React.ReactNode }) {
+export function Row({ id, title, heading, href, children }: { id?: string; title: string; heading?: React.ReactNode; href?: string; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ start: true, end: false });
 
@@ -27,7 +27,7 @@ export function Row({ id, title, href, children }: { id?: string; title: string;
   return (
     <section id={id} aria-label={title} className="group/row relative scroll-mt-24">
       <div className="mb-2 flex items-baseline gap-3 px-4 sm:px-8">
-        <h2 className="text-lg font-bold tracking-tight text-ink sm:text-xl">{title}</h2>
+        <h2 className="text-lg font-bold tracking-tight text-ink sm:text-xl">{heading ?? title}</h2>
         {href && (
           <Link href={href} className="text-xs font-semibold text-karyalo-green opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 max-lg:opacity-100">
             Lihat semua ›

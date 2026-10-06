@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Clock, Info, ShieldCheck, X } from "lucide-react";
-import { formatRupiah, productBySlug, TARGET_FIELDS, type Product } from "@/lib/catalog";
+import { Clock, Coins, Info, ShieldCheck, X, Zap } from "lucide-react";
+import { earnablePoints, flashDealFor, formatRupiah, POINTS_EXPIRY_DAYS, productBySlug, TARGET_FIELDS, type Product } from "@/lib/catalog";
 import { ProductArt } from "@/components/ProductArt";
 
 interface ModalState {
@@ -39,6 +39,8 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
   const [values, setValues] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [voucher, setVoucher] = useState("");
+  const [voucherNote, setVoucherNote] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const opener = useRef<Element | null>(null);
 
@@ -60,6 +62,8 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
 
   const nominal = product.nominals.find((x) => x.id === nominalId);
   const isBill = (nominal?.price ?? 0) === 0;
+  const deal = flashDealFor(product.slug, nominal?.id);
+  const payable = deal?.price ?? nominal?.price ?? 0;
   const errors = target.fields
     .filter((f) => (values[f.key] ?? "").replace(/\D/g, "").length < f.minLength)
     .map((f) => f.key);
@@ -98,7 +102,11 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
           >
             <X size={20} />
           </button>
-          <div className="absolute inset-x-5 bottom-3 sm:inset-x-8">
+          <div className="absolute inset-x-5 bottom-3 flex items-end gap-4 sm:inset-x-8">
+            {product.image && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={product.image} alt="" aria-hidden="true" className={`size-20 shrink-0 rounded-2xl bg-white shadow-xl ${product.logo ? "object-contain p-1" : "object-cover"} ring-2 ring-warm-white sm:size-24`} />
+            )}
             <h2 id="product-title" className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{product.name}</h2>
           </div>
         </div>
@@ -117,6 +125,8 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                 {product.nominals.map((x) => {
                   const selected = x.id === nominalId;
+                  const flash = flashDealFor(product.slug, x.id);
+                  const compareAt = flash ? x.price : x.compareAt;
                   return (
                     <label
                       key={x.id}
@@ -125,11 +135,16 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
                       }`}
                     >
                       <input type="radio" name="nominal" value={x.id} checked={selected} onChange={() => setNominalId(x.id)} className="sr-only" />
+                      {flash && (
+                        <span className="inline-flex w-fit items-center gap-0.5 rounded bg-terracotta px-1.5 py-px text-[10px] font-bold uppercase tracking-wide text-white">
+                          <Zap size={10} aria-hidden="true" /> Flash sale
+                        </span>
+                      )}
                       <span className="text-[13px] font-semibold text-ink">{x.label}</span>
                       {x.price > 0 ? (
-                        <span className="text-xs tabular-nums text-muted">
-                          {x.compareAt && <s className="mr-1">{formatRupiah(x.compareAt)}</s>}
-                          <span className={x.compareAt ? "font-bold text-terracotta" : ""}>{formatRupiah(x.price)}</span>
+                        <span className="flex flex-wrap gap-x-1 text-xs tabular-nums text-muted">
+                          {compareAt && <s>{formatRupiah(compareAt)}</s>}
+                          <span className={compareAt ? "font-bold text-terracotta" : ""}>{formatRupiah(flash?.price ?? x.price)}</span>
                         </span>
                       ) : (
                         <span className="text-xs text-muted">Jumlah dicek dulu</span>
@@ -172,11 +187,49 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
             <dl className="flex flex-col gap-1.5 text-[13px]">
               <div className="flex justify-between gap-2"><dt className="text-muted">Produk</dt><dd className="text-right font-medium text-ink">{product.name}</dd></div>
               <div className="flex justify-between gap-2"><dt className="text-muted">Nominal</dt><dd className="text-right font-medium text-ink">{nominal?.label ?? "-"}</dd></div>
+              {deal && nominal && (
+                <div className="flex justify-between gap-2">
+                  <dt className="inline-flex items-center gap-1 text-terracotta"><Zap size={12} aria-hidden="true" /> Flash sale</dt>
+                  <dd className="text-right font-medium tabular-nums text-terracotta">−{formatRupiah(nominal.price - deal.price)}</dd>
+                </div>
+              )}
               <div className="flex justify-between gap-2 border-t border-border pt-2">
                 <dt className="font-semibold text-ink">Total</dt>
-                <dd className="text-right text-base font-extrabold tabular-nums text-ink">{nominal && nominal.price > 0 ? formatRupiah(nominal.price) : "Dicek dulu"}</dd>
+                <dd className="text-right text-base font-extrabold tabular-nums text-ink">{payable > 0 ? formatRupiah(payable) : "Dicek dulu"}</dd>
               </div>
+              {payable > 0 && (
+                <div className="flex justify-between gap-2 text-xs">
+                  <dt className="inline-flex items-center gap-1 text-muted"><Coins size={12} aria-hidden="true" /> Poin member</dt>
+                  <dd className="text-right font-semibold tabular-nums text-status-success">+{earnablePoints(payable).toLocaleString("id-ID")}</dd>
+                </div>
+              )}
             </dl>
+            {deal && (
+              <p className="text-[11px] text-terracotta">Sisa kuota flash sale: {deal.quota - deal.sold} dari {deal.quota}.</p>
+            )}
+            {!isBill && (
+              <div className="flex flex-col gap-1">
+                <label htmlFor="voucher" className="text-xs font-semibold text-ink">Kode voucher</label>
+                <div className="flex gap-1.5">
+                  <input
+                    id="voucher"
+                    value={voucher}
+                    onChange={(e) => { setVoucher(e.target.value.toUpperCase()); setVoucherNote(null); }}
+                    autoComplete="off"
+                    className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 text-xs uppercase tracking-wide text-ink focus:outline-none focus:ring-2 focus:ring-karyalo-green"
+                  />
+                  <button
+                    type="button"
+                    disabled={!voucher.trim()}
+                    onClick={() => setVoucherNote("Voucher khusus member. Login member belum aktif di prototype ini, jadi voucher belum bisa dipakai.")}
+                    className="h-9 rounded-lg border border-karyalo-green px-3 text-xs font-bold text-karyalo-green hover:bg-soft-sage disabled:opacity-40"
+                  >
+                    Pakai
+                  </button>
+                </div>
+                {voucherNote && <p role="status" className="text-[11px] leading-relaxed text-muted">{voucherNote}</p>}
+              </div>
+            )}
             <button type="submit" className="h-11 rounded-xl bg-karyalo-green text-sm font-bold text-white transition-colors hover:bg-deep-pine">
               {isBill ? "Cek tagihan" : "Lanjut ke pembayaran"}
             </button>
@@ -185,7 +238,9 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
                 <Info size={14} className="mt-0.5 shrink-0 text-terracotta" /> {notice}
               </p>
             )}
-            <p className="text-[11px] leading-relaxed text-muted">Harga dan nominal di halaman ini adalah data contoh.</p>
+            <p className="text-[11px] leading-relaxed text-muted">
+              Harga dan nominal di halaman ini adalah data contoh. Poin member: 1 poin = Rp1, berlaku {POINTS_EXPIRY_DAYS} hari.
+            </p>
           </aside>
         </form>
       </div>

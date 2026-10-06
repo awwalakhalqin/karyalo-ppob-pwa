@@ -1,8 +1,8 @@
 /**
  * Katalog CONTOH untuk prototype UI. Harga, nominal, dan riwayat di sini bukan
  * price list sungguhan — di produksi diganti price list Digiflazz (+ margin)
- * seperti pada DeliaStore. Nama produk dipakai sebagai teks saja; tidak ada
- * logo merek pihak lain di aplikasi ini.
+ * seperti pada DeliaStore. Gambar game dan logo operator/e-wallet di
+ * /public/products dipakai sebagai ikon produk (pola yang sama dengan DeliaStore).
  */
 
 export type CategorySlug = "game" | "pulsa-data" | "pln-tagihan" | "e-money" | "voucher";
@@ -14,10 +14,10 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { slug: "game", label: "Game", tagline: "Diamond, UC, dan kredit game masuk otomatis setelah bayar." },
+  { slug: "game", label: "Top Up Game", tagline: "Diamond, UC, dan kredit game masuk otomatis setelah bayar." },
   { slug: "pulsa-data", label: "Pulsa & Data", tagline: "Pulsa dan paket data semua operator, langsung aktif." },
   { slug: "pln-tagihan", label: "PLN & Tagihan", tagline: "Token listrik dan tagihan bulanan tanpa antre." },
-  { slug: "e-money", label: "E-Money", tagline: "Isi saldo dompet digital tanpa biaya admin tersembunyi." },
+  { slug: "e-money", label: "E-Wallet", tagline: "Isi saldo dompet digital tanpa biaya admin tersembunyi." },
   { slug: "voucher", label: "Voucher", tagline: "Kode voucher digital dikirim setelah pembayaran." },
 ];
 
@@ -79,6 +79,10 @@ export interface Product {
   target: TargetKind;
   nominals: Nominal[];
   art: { from: string; to: string; icon: ArtIcon };
+  /** Product artwork in /public/products; without it the card falls back to the gradient art. */
+  image?: string;
+  /** The image is a brand logo on white: shown whole on a light tile, not as key art. */
+  logo?: boolean;
   badge?: "Promo" | "Baru" | "Terlaris";
   /** Peringkat penjualan hari ini (1 = paling laris). */
   rank?: number;
@@ -89,7 +93,7 @@ const n = (id: string, label: string, price: number, compareAt?: number): Nomina
 export const PRODUCTS: Product[] = [
   // --- Game ---
   {
-    slug: "mobile-legends", name: "Mobile Legends", category: "game", rank: 1, badge: "Terlaris",
+    slug: "mobile-legends", image: "/products/mobile-legends.webp", name: "Mobile Legends", category: "game", rank: 1, badge: "Terlaris",
     tagline: "Diamond masuk ±1 menit setelah bayar.",
     description: "Top up diamond Mobile Legends: Bang Bang memakai User ID dan Zone ID. Tidak perlu login akun.",
     processTime: "± 1 menit", target: "game-id-zone",
@@ -97,7 +101,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#1e5aa8", to: "#111b36", icon: "game" },
   },
   {
-    slug: "free-fire", name: "Free Fire", category: "game", rank: 2,
+    slug: "free-fire", image: "/products/free-fire.webp", name: "Free Fire", category: "game", rank: 2,
     tagline: "Diamond Free Fire, cukup Player ID.",
     description: "Top up diamond Free Fire dengan Player ID. Diamond masuk otomatis ke akun.",
     processTime: "± 1 menit", target: "game-id",
@@ -105,7 +109,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#a5482d", to: "#1e2f5c", icon: "game" },
   },
   {
-    slug: "pubg-mobile", name: "PUBG Mobile", category: "game", rank: 5,
+    slug: "pubg-mobile", image: "/products/pubg-mobile.webp", name: "PUBG Mobile", category: "game", rank: 5,
     tagline: "UC PUBG Mobile untuk Royale Pass dan skin.",
     description: "Top up UC PUBG Mobile dengan Player ID.",
     processTime: "± 2 menit", target: "game-id",
@@ -113,7 +117,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#2a6f64", to: "#111b36", icon: "game" },
   },
   {
-    slug: "genshin-impact", name: "Genshin Impact", category: "game", badge: "Promo",
+    slug: "genshin-impact", image: "/products/genshin-impact.webp", name: "Genshin Impact", category: "game", badge: "Promo",
     tagline: "Genesis Crystal dan Blessing of the Welkin Moon.",
     description: "Top up Genesis Crystal Genshin Impact dengan UID dan server.",
     processTime: "± 3 menit", target: "game-id-zone",
@@ -129,7 +133,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#b3261e", to: "#111b36", icon: "game" },
   },
   {
-    slug: "honor-of-kings", name: "Honor of Kings", category: "game", badge: "Baru",
+    slug: "honor-of-kings", image: "/products/honor-of-kings.webp", name: "Honor of Kings", category: "game", badge: "Baru",
     tagline: "Token Honor of Kings, proses otomatis.",
     description: "Top up token Honor of Kings dengan Player ID.",
     processTime: "± 2 menit", target: "game-id",
@@ -137,7 +141,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#7a5a1e", to: "#1e2f5c", icon: "game" },
   },
   {
-    slug: "call-of-duty-mobile", name: "Call of Duty Mobile", category: "game",
+    slug: "call-of-duty-mobile", image: "/products/call-of-duty-mobile.webp", name: "Call of Duty Mobile", category: "game",
     tagline: "CP untuk Battle Pass dan bundle.",
     description: "Top up CP Call of Duty Mobile memakai Player ID.",
     processTime: "± 2 menit", target: "game-id",
@@ -145,9 +149,37 @@ export const PRODUCTS: Product[] = [
     art: { from: "#4b5563", to: "#111b36", icon: "game" },
   },
 
+  {
+    slug: "free-fire-max", name: "Free Fire MAX", category: "game", badge: "Baru",
+    image: "/products/free-fire-max.webp",
+    tagline: "Diamond Free Fire MAX, satu akun dengan Free Fire.",
+    description: "Top up diamond Free Fire MAX dengan Player ID. Diamond yang sama terpakai di Free Fire biasa.",
+    processTime: "± 1 menit", target: "game-id",
+    nominals: [n("ffm-70", "70 Diamond", 10500), n("ffm-140", "140 Diamond", 21000), n("ffm-355", "355 Diamond", 52000), n("ffm-720", "720 Diamond", 103000)],
+    art: { from: "#7a1f5c", to: "#1e2f5c", icon: "game" },
+  },
+  {
+    slug: "magic-chess-go-go", name: "Magic Chess: Go Go", category: "game", badge: "Baru",
+    image: "/products/magic-chess-go-go.webp",
+    tagline: "Diamond Magic Chess: Go Go, pakai User ID dan Zone ID.",
+    description: "Top up diamond Magic Chess: Go Go memakai User ID dan Zone ID, sama seperti akun Mobile Legends.",
+    processTime: "± 1 menit", target: "game-id-zone",
+    nominals: [n("mcgg-86", "86 Diamond", 23500), n("mcgg-172", "172 Diamond", 46500), n("mcgg-344", "344 Diamond", 92000)],
+    art: { from: "#4c6b3a", to: "#1e2f5c", icon: "game" },
+  },
+  {
+    slug: "delta-force", name: "Delta Force", category: "game", badge: "Baru",
+    image: "/products/delta-force.webp",
+    tagline: "Delta Coin untuk operator dan senjata.",
+    description: "Top up Delta Coin Delta Force memakai Player ID.",
+    processTime: "± 2 menit", target: "game-id",
+    nominals: [n("df-60", "60 Delta Coin", 15000), n("df-300", "300 Delta Coin", 75000), n("df-680", "680 Delta Coin", 150000)],
+    art: { from: "#3d4a3a", to: "#111b36", icon: "game" },
+  },
+
   // --- Pulsa & data ---
   {
-    slug: "telkomsel", name: "Telkomsel", category: "pulsa-data", rank: 3,
+    slug: "telkomsel", image: "/products/telkomsel.webp", logo: true, name: "Telkomsel", category: "pulsa-data", rank: 3,
     tagline: "Pulsa dan paket data Telkomsel.",
     description: "Isi pulsa reguler dan paket data Telkomsel. Pulsa masuk dalam hitungan detik.",
     processTime: "± 10 detik", target: "phone",
@@ -155,7 +187,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#b3261e", to: "#5c1414", icon: "phone" },
   },
   {
-    slug: "indosat", name: "Indosat", category: "pulsa-data", rank: 6,
+    slug: "indosat", image: "/products/indosat.webp", logo: true, name: "Indosat", category: "pulsa-data", rank: 6,
     tagline: "Pulsa dan paket data IM3.",
     description: "Isi pulsa dan paket data Indosat Ooredoo (IM3).",
     processTime: "± 10 detik", target: "phone",
@@ -163,7 +195,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#c99a1a", to: "#5a3d00", icon: "phone" },
   },
   {
-    slug: "xl", name: "XL Axiata", category: "pulsa-data",
+    slug: "xl", image: "/products/xl.webp", logo: true, name: "XL Axiata", category: "pulsa-data",
     tagline: "Pulsa dan paket data XL.",
     description: "Isi pulsa dan paket data XL.",
     processTime: "± 10 detik", target: "phone",
@@ -171,7 +203,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#1e5aa8", to: "#0b2d5c", icon: "phone" },
   },
   {
-    slug: "tri", name: "Tri", category: "pulsa-data",
+    slug: "tri", image: "/products/tri.webp", logo: true, name: "Tri", category: "pulsa-data",
     tagline: "Pulsa dan kuota Tri.",
     description: "Isi pulsa dan paket data Tri (3).",
     processTime: "± 10 detik", target: "phone",
@@ -179,7 +211,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#6b2d7a", to: "#2a0f33", icon: "phone" },
   },
   {
-    slug: "smartfren", name: "Smartfren", category: "pulsa-data",
+    slug: "smartfren", image: "/products/smartfren.webp", logo: true, name: "Smartfren", category: "pulsa-data",
     tagline: "Pulsa dan kuota Smartfren.",
     description: "Isi pulsa dan paket data Smartfren.",
     processTime: "± 10 detik", target: "phone",
@@ -187,9 +219,26 @@ export const PRODUCTS: Product[] = [
     art: { from: "#a5482d", to: "#4a1d10", icon: "phone" },
   },
 
+  {
+    slug: "axis", image: "/products/axis.webp", logo: true, name: "Axis", category: "pulsa-data",
+    tagline: "Pulsa dan kuota Axis.",
+    description: "Isi pulsa dan paket data Axis.",
+    processTime: "± 10 detik", target: "phone",
+    nominals: [n("axis-10", "Pulsa 10.000", 10900), n("axis-25", "Pulsa 25.000", 25100), n("axis-d8", "Data 8 GB / 30 hari", 45000)],
+    art: { from: "#6b2d7a", to: "#1e2f5c", icon: "phone" },
+  },
+  {
+    slug: "byu", image: "/products/byu.webp", logo: true, name: "by.U", category: "pulsa-data",
+    tagline: "Pulsa dan kuota by.U.",
+    description: "Isi pulsa dan paket data by.U (jaringan Telkomsel).",
+    processTime: "± 10 detik", target: "phone",
+    nominals: [n("byu-10", "Pulsa 10.000", 10900), n("byu-d10", "Data 10 GB / 30 hari", 50000)],
+    art: { from: "#2fc1d6", to: "#1e2f5c", icon: "phone" },
+  },
+
   // --- PLN & tagihan ---
   {
-    slug: "token-pln", name: "Token PLN", category: "pln-tagihan", rank: 4, badge: "Terlaris",
+    slug: "token-pln", image: "/products/token-pln.webp", logo: true, name: "Token PLN", category: "pln-tagihan", rank: 4, badge: "Terlaris",
     tagline: "Token listrik prabayar, kode langsung tampil.",
     description: "Beli token listrik PLN prabayar dengan nomor meter. Kode token 20 digit tampil setelah bayar.",
     processTime: "± 30 detik", target: "meter",
@@ -197,7 +246,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#c99a1a", to: "#1e2f5c", icon: "zap" },
   },
   {
-    slug: "tagihan-pln", name: "Tagihan PLN", category: "pln-tagihan",
+    slug: "tagihan-pln", image: "/products/token-pln.webp", logo: true, name: "Tagihan PLN", category: "pln-tagihan",
     tagline: "Bayar listrik pascabayar tanpa antre.",
     description: "Cek dan bayar tagihan listrik PLN pascabayar dengan ID pelanggan.",
     processTime: "Instan", target: "meter",
@@ -231,7 +280,7 @@ export const PRODUCTS: Product[] = [
 
   // --- E-money ---
   {
-    slug: "gopay", name: "GoPay", category: "e-money", rank: 7,
+    slug: "gopay", image: "/products/gopay.webp", logo: true, name: "GoPay", category: "e-money", rank: 7,
     tagline: "Isi saldo GoPay ke nomor HP.",
     description: "Top up saldo GoPay ke nomor HP yang terdaftar.",
     processTime: "± 1 menit", target: "phone",
@@ -239,7 +288,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#0f8a8a", to: "#0b3d3d", icon: "wallet" },
   },
   {
-    slug: "ovo", name: "OVO", category: "e-money",
+    slug: "ovo", image: "/products/ovo.webp", logo: true, name: "OVO", category: "e-money",
     tagline: "Isi saldo OVO Cash.",
     description: "Top up OVO Cash ke nomor HP yang terdaftar.",
     processTime: "± 1 menit", target: "phone",
@@ -247,7 +296,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#4c2a85", to: "#1f0f3d", icon: "wallet" },
   },
   {
-    slug: "dana", name: "DANA", category: "e-money", rank: 9,
+    slug: "dana", image: "/products/dana.webp", logo: true, name: "DANA", category: "e-money", rank: 9,
     tagline: "Isi saldo DANA tanpa ribet.",
     description: "Top up saldo DANA ke nomor HP yang terdaftar.",
     processTime: "± 1 menit", target: "phone",
@@ -255,7 +304,7 @@ export const PRODUCTS: Product[] = [
     art: { from: "#1e5aa8", to: "#0b2d5c", icon: "wallet" },
   },
   {
-    slug: "shopeepay", name: "ShopeePay", category: "e-money",
+    slug: "shopeepay", image: "/products/shopeepay.webp", logo: true, name: "ShopeePay", category: "e-money",
     tagline: "Isi saldo ShopeePay.",
     description: "Top up ShopeePay ke nomor HP yang terdaftar.",
     processTime: "± 1 menit", target: "phone",
@@ -307,3 +356,111 @@ export const RECENT_PURCHASES: { slug: string; nominalId: string; target: string
 
 /** Produk unggulan di billboard beranda. */
 export const FEATURED_SLUG = "mobile-legends";
+
+/* ------------------------------------------------------------------ */
+/* Flash sale — sama konsepnya dengan Promo DeliaStore: jadwal + kuota. */
+/* ------------------------------------------------------------------ */
+
+export interface FlashDeal {
+  slug: string;
+  nominalId: string;
+  /** Harga flash sale; harga normal diambil dari nominal produk. */
+  price: number;
+  quota: number;
+  sold: number;
+}
+
+/** Sesi flash sale harian (jam lokal). Sesi berjalan sampai jam berikutnya di daftar ini. */
+export const FLASH_SESSIONS = [0, 12, 18] as const;
+
+export const FLASH_DEALS: FlashDeal[] = [
+  { slug: "mobile-legends", nominalId: "ml-86", price: 19900, quota: 100, sold: 87 },
+  { slug: "free-fire", nominalId: "ff-140", price: 17900, quota: 80, sold: 41 },
+  { slug: "pubg-mobile", nominalId: "pm-60", price: 12500, quota: 60, sold: 52 },
+  { slug: "magic-chess-go-go", nominalId: "mcgg-172", price: 41000, quota: 50, sold: 18 },
+  { slug: "genshin-impact", nominalId: "gi-welkin", price: 64900, quota: 40, sold: 33 },
+  { slug: "honor-of-kings", nominalId: "hok-240", price: 39900, quota: 50, sold: 12 },
+  { slug: "delta-force", nominalId: "df-300", price: 66000, quota: 40, sold: 9 },
+  { slug: "token-pln", nominalId: "pln-50", price: 50500, quota: 200, sold: 154 },
+];
+
+export const flashDealFor = (slug: string, nominalId?: string) =>
+  FLASH_DEALS.find((d) => d.slug === slug && d.nominalId === nominalId && d.sold < d.quota);
+
+/** Akhir sesi yang sedang berjalan (ms epoch), dihitung di browser pengunjung. */
+export function flashSessionEnd(now: Date): number {
+  const next = FLASH_SESSIONS.map((h) => {
+    const t = new Date(now);
+    t.setHours(h, 0, 0, 0);
+    if (t.getTime() <= now.getTime()) t.setDate(t.getDate() + 1);
+    return t.getTime();
+  });
+  return Math.min(...next);
+}
+
+/* ------------------------------------------------------------------ */
+/* Member — poin seperti DeliaStore: 1 poin = Rp1, kedaluwarsa 45 hari. */
+/* ------------------------------------------------------------------ */
+
+export const POINTS_RATE = 0.01;
+export const POINTS_EXPIRY_DAYS = 45;
+export const earnablePoints = (amount: number) => Math.floor(amount * POINTS_RATE);
+
+/* ------------------------------------------------------------------ */
+/* Banner promo beranda (DeliaStore: 1600×800, teks kiri, visual kanan). */
+/* ------------------------------------------------------------------ */
+
+export interface PromoBanner {
+  id: string;
+  eyebrow: string;
+  title: string;
+  /** Bagian judul yang diberi warna aksen. */
+  highlight: string;
+  body: string;
+  cta: string;
+  href: string;
+  /** Slug produk yang gambarnya disusun di sisi kanan. */
+  showcase: string[];
+  tone: { from: string; to: string };
+  sticker?: string;
+}
+
+export const PROMO_BANNERS: PromoBanner[] = [
+  {
+    id: "games", eyebrow: "Top up game", title: "Diamond murah,", highlight: "push rank lancar.",
+    body: "Mobile Legends, Free Fire, PUBG Mobile, Genshin — tinggal masukkan ID, diamond masuk otomatis.",
+    cta: "Top up sekarang", href: "/kategori/game",
+    showcase: ["mobile-legends", "free-fire", "pubg-mobile", "genshin-impact"],
+    tone: { from: "#1e2f5c", to: "#1e5aa8" }, sticker: "Mulai belasan ribu",
+  },
+  {
+    id: "flash", eyebrow: "Flash sale harian", title: "Harga coret tiap sesi,", highlight: "kuota terbatas.",
+    body: "Sesi baru tiap pukul 00.00, 12.00, dan 18.00. Siapa cepat, dia dapat.",
+    cta: "Lihat flash sale", href: "/#flash-sale",
+    showcase: ["magic-chess-go-go", "honor-of-kings", "delta-force"],
+    tone: { from: "#5c1f14", to: "#a5482d" }, sticker: "Sisa kuota terbatas",
+  },
+  {
+    id: "game-baru", eyebrow: "Baru di Karyalo", title: "Game baru,", highlight: "langsung bisa top up.",
+    body: "Free Fire MAX, Magic Chess: Go Go, Honor of Kings, dan Delta Force sudah tersedia.",
+    cta: "Lihat game baru", href: "/#game-baru",
+    showcase: ["free-fire-max", "magic-chess-go-go", "delta-force", "honor-of-kings"],
+    tone: { from: "#111b36", to: "#2a6f64" },
+  },
+  {
+    id: "member", eyebrow: "Member Karyalo", title: "Tiap top up", highlight: "jadi poin.",
+    body: `Login pakai nomor WhatsApp, kumpulkan 1% poin tiap transaksi. 1 poin = Rp1, berlaku ${POINTS_EXPIRY_DAYS} hari.`,
+    cta: "Mulai top up", href: "/kategori/game",
+    showcase: ["call-of-duty-mobile", "genshin-impact", "free-fire"],
+    tone: { from: "#1e2f5c", to: "#2fc1d6" }, sticker: "Segera hadir",
+  },
+  {
+    id: "utilitas", eyebrow: "Pulsa · Data · PLN", title: "Kebutuhan bulanan,", highlight: "sekali klik.",
+    body: "Pulsa semua operator, token PLN, dan saldo e-wallet masuk dalam hitungan detik.",
+    cta: "Isi pulsa & token", href: "/kategori/pulsa-data",
+    showcase: ["telkomsel", "token-pln", "dana", "xl"],
+    tone: { from: "#111b36", to: "#1e5aa8" },
+  },
+];
+
+export const newGames = () => PRODUCTS.filter((p) => p.category === "game" && p.badge === "Baru");

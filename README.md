@@ -15,14 +15,21 @@ palet dan token mengikuti Karyalo Design System):
 - **Navbar** — transparan di atas billboard, solid saat di-scroll; kategori di kiri,
   pencarian langsung, notifikasi, dan akun di kanan. Di ponsel kategori menjadi chip.
 - **Billboard** — satu produk unggulan dengan aksi *Top up sekarang* / *Info lengkap*.
-- **Baris geser** — *Beli lagi*, *Top 10 hari ini* (angka besar), satu baris per
-  kategori, dan *Promo minggu ini*.
+- **Flash Sale** — sesi harian (00.00 / 12.00 / 18.00) dengan hitung mundur, harga
+  coret, dan bar kuota terjual. Harga flash dipakai juga di panel detail.
+- **Banner promo** — kartu iklan 2:1 (pola banner DeliaStore: teks kiri, susunan
+  gambar game kanan), digambar dengan kode sehingga tetap tajam dan mudah diubah.
+- **Baris geser** — *Beli lagi*, *Top Up Game*, *Top 10 hari ini* (angka besar),
+  *Game baru*, satu baris per kategori lain, dan *Promo minggu ini*.
 - **Panel detail** — pilihan nominal, isian target sesuai jenis produk (User ID +
-  Zone ID, nomor HP, nomor meter, nomor pelanggan) dengan validasi, dan ringkasan.
+  Zone ID, nomor HP, nomor meter, nomor pelanggan) dengan validasi, ringkasan,
+  perkiraan poin member (1% · 1 poin = Rp1 · berlaku 45 hari), dan kolom voucher
+  member — konsep yang sama dengan DeliaStore.
 - **Halaman kategori** — `/kategori/[slug]`, pola yang sama dengan beranda.
 
-Tidak ada logo merek pihak lain; sampul produk dibuat dari gradasi, ikon kategori,
-dan nama produk.
+Gambar produk ada di `public/products/`: key art game (dari folder `picture/` dan
+aset DeliaStore) serta logo operator, PLN, dan e-wallet. Produk tanpa gambar
+(Valorant, voucher, sebagian tagihan) memakai sampul gradasi + ikon kategori.
 
 ## Menjalankan
 

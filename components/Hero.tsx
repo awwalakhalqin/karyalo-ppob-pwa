@@ -19,9 +19,25 @@ export function Hero({ product, eyebrow, compact = false }: { product: Product; 
       aria-label={`Unggulan: ${product.name}`}
       className={`relative isolate flex items-end overflow-hidden bg-night ${compact ? "min-h-[46vh] sm:min-h-[52vh]" : "min-h-[72vh] sm:min-h-[80vh]"}`}
     >
-      {/* Artwork */}
+      {/* Artwork: the game's own image when there is one, the category icon otherwise */}
       <div className="absolute inset-0 -z-10" style={{ background: `linear-gradient(120deg, ${product.art.from} 0%, ${product.art.to} 70%, #0a1022 100%)` }} />
-      <Icon aria-hidden="true" className="absolute -right-10 top-1/2 -z-10 size-[26rem] -translate-y-1/2 rotate-[-10deg] text-white/10 sm:size-[38rem]" strokeWidth={1.1} />
+      {product.image ? (
+        <>
+          {!product.logo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.image} alt="" aria-hidden="true" className="absolute inset-0 -z-10 size-full scale-110 object-cover opacity-55 blur-2xl" />
+          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={product.image}
+            alt=""
+            aria-hidden="true"
+            className={`absolute right-[6%] top-1/2 -z-10 hidden aspect-square w-[min(34vw,26rem)] -translate-y-1/2 rotate-3 rounded-[2rem] bg-white shadow-2xl ${product.logo ? "object-contain" : "object-cover"} ring-1 ring-white/25 md:block`}
+          />
+        </>
+      ) : (
+        <Icon aria-hidden="true" className="absolute -right-10 top-1/2 -z-10 size-[26rem] -translate-y-1/2 rotate-[-10deg] text-white/10 sm:size-[38rem]" strokeWidth={1.1} />
+      )}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-night/90 via-night/40 to-transparent" />
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-warm-white" />
 

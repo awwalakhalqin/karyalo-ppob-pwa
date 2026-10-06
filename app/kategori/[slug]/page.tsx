@@ -4,7 +4,8 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Footer } from "@/components/Footer";
 import { Row, ProductCard } from "@/components/Rows";
-import { CATEGORIES, categoryBySlug, productsIn, type CategorySlug } from "@/lib/catalog";
+import { FlashSaleCard, FlashSaleTitle } from "@/components/Promo";
+import { CATEGORIES, categoryBySlug, FLASH_DEALS, productBySlug, productsIn, type CategorySlug } from "@/lib/catalog";
 
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.slug }));
@@ -26,6 +27,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   if (!category) notFound();
   const items = productsIn(category.slug as CategorySlug);
   const featured = [...items].sort((a, b) => (a.rank ?? 99) - (b.rank ?? 99))[0];
+  const deals = FLASH_DEALS.filter((d) => productBySlug(d.slug)?.category === category.slug);
 
   return (
     <>
@@ -37,6 +39,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             {items.map((p) => <ProductCard key={p.slug} product={p} />)}
           </Row>
           <p className="px-4 text-sm text-muted sm:px-8">{category.tagline}</p>
+          {deals.length > 0 && (
+            <Row id="flash-sale" title="Flash Sale" heading={<FlashSaleTitle />}>
+              {deals.map((d) => <FlashSaleCard key={d.slug + d.nominalId} deal={d} />)}
+            </Row>
+          )}
         </div>
       </main>
       <Footer />
