@@ -29,13 +29,13 @@ export function Row({ id, title, heading, href, children }: { id?: string; title
       <div className="mb-2 flex items-baseline gap-3 px-4 sm:px-8">
         <h2 className="text-lg font-bold tracking-tight text-ink sm:text-xl">{heading ?? title}</h2>
         {href && (
-          <Link href={href} className="text-xs font-semibold text-karyalo-green opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 max-lg:opacity-100">
-            Lihat semua ›
+          <Link href={href} className="inline-flex items-center text-xs font-semibold text-karyalo-green opacity-0 transition-opacity group-hover/row:opacity-100 focus-visible:opacity-100 max-lg:opacity-100">
+            Lihat semua <ChevronRight size={14} aria-hidden="true" />
           </Link>
         )}
       </div>
       <div className="relative">
-        <div ref={ref} onScroll={update} className="row-scroller flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-px-4 px-4 py-3 sm:scroll-px-8 sm:gap-3 sm:px-8">
+        <div ref={ref} onScroll={update} className="row-scroller flex snap-x snap-mandatory gap-2 overflow-x-auto overflow-y-hidden scroll-px-4 px-4 py-3 sm:scroll-px-8 sm:gap-3 sm:px-8">
           {children}
         </div>
         {!edges.start && (
@@ -54,14 +54,14 @@ export function Row({ id, title, heading, href, children }: { id?: string; title
 }
 
 /** Landscape card that lifts on hover and reveals price and speed. */
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, fluid = false }: { product: Product; fluid?: boolean }) {
   const { open } = useProductModal();
   const from = startingPrice(product);
   return (
     <button
       type="button"
       onClick={() => open(product.slug)}
-      className="group/card relative w-[44vw] shrink-0 snap-start overflow-hidden rounded-lg text-left shadow-sm transition-transform duration-200 hover:z-10 hover:scale-[1.06] focus-visible:scale-[1.06] sm:w-56 lg:w-64"
+      className={`group/card relative overflow-hidden rounded-lg text-left shadow-[0_1px_2px_rgb(30_47_92/0.06),0_8px_20px_-10px_rgb(30_47_92/0.25)] transition-transform duration-200 hover:z-10 hover:scale-[1.04] focus-visible:scale-[1.04] active:scale-[0.98] ${fluid ? "w-full" : "w-[44vw] shrink-0 snap-start sm:w-56 lg:w-64"}`}
     >
       <ProductArt product={product} className="aspect-video" />
       {product.badge && (
@@ -87,12 +87,12 @@ export function RankCard({ product, rank }: { product: Product; rank: number }) 
     >
       <span
         aria-hidden="true"
-        className="-mr-4 select-none text-[7rem] font-black leading-[0.8] tracking-tighter text-warm-white sm:text-[9rem]"
+        className="-mr-3 shrink-0 select-none pb-[0.18em] text-[6rem] font-black leading-[0.8] tracking-tighter text-warm-white sm:-mr-4 sm:text-[8rem]"
         style={{ WebkitTextStroke: "3px var(--color-deep-pine)" }}
       >
         {rank}
       </span>
-      <span className="relative w-28 overflow-hidden rounded-lg shadow-md transition-transform duration-200 group-hover/rank:scale-105 sm:w-36">
+      <span className="relative mb-[1.1rem] w-28 shrink-0 overflow-hidden rounded-lg shadow-md transition-transform duration-200 group-hover/rank:scale-105 sm:mb-[1.45rem] sm:w-36">
         <ProductArt product={product} size="tall" className="aspect-[2/3]" />
       </span>
     </button>
@@ -109,17 +109,21 @@ export function ReorderCard({ slug, nominalId, target, whenLabel }: { slug: stri
     <button
       type="button"
       onClick={() => open(slug, nominalId)}
-      className="group/re w-[60vw] shrink-0 snap-start overflow-hidden rounded-lg bg-white text-left shadow-sm ring-1 ring-border transition-transform duration-200 hover:scale-[1.04] sm:w-64"
+      className="group/re surface flex w-[82vw] shrink-0 snap-start items-center gap-3 rounded-lg p-2.5 text-left transition-[box-shadow,transform] duration-200 hover:surface-hover active:scale-[0.98] sm:w-96"
     >
-      <div className="relative">
-        <ProductArt product={product} className="aspect-video" />
-        <span className="absolute inset-0 flex items-center justify-center bg-night/0 opacity-0 transition group-hover/re:bg-night/40 group-hover/re:opacity-100">
-          <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-ink"><RotateCcw size={13} /> Beli lagi</span>
-        </span>
-      </div>
-      <span className="block px-3 py-2">
-        <span className="block truncate text-[13px] font-semibold text-ink">{nominal.label}</span>
-        <span className="block truncate text-xs text-muted">{target} · {whenLabel}</span>
+      {product.image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={product.image} alt="" className={`size-14 shrink-0 rounded-lg ring-1 ring-deep-pine/10 ${product.logo ? "logo-tile object-contain p-1.5" : "object-cover"}`} />
+      ) : (
+        <ProductArt product={product} size="tall" className="size-14 shrink-0 rounded-lg" />
+      )}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[13px] font-bold text-ink">{product.name}</span>
+        <span className="block truncate text-[13px] text-ink/80">{nominal.label}</span>
+        <span className="block truncate text-xs text-muted">{target}, {whenLabel.toLowerCase()}</span>
+      </span>
+      <span className="flex shrink-0 items-center gap-1 rounded-md bg-soft-sage px-2.5 py-1.5 text-xs font-bold text-karyalo-green transition-colors group-hover/re:bg-karyalo-green group-hover/re:text-white">
+        <RotateCcw size={13} aria-hidden="true" /> Beli lagi
       </span>
     </button>
   );

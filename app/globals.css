@@ -20,7 +20,7 @@
   --color-status-success: #1c7a4d;
   --color-status-critical: #b3261e;
 
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
 }
 
 html {
@@ -38,6 +38,36 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-karyalo-green);
   outline-offset: 2px;
+}
+
+/* One surface for every light card: white on the warm-white page needs a
+   visible navy-tinted edge and shadow, or the card melts into the background. */
+@utility surface {
+  background: #fff;
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-deep-pine) 14%, transparent),
+    0 1px 2px rgb(30 47 92 / 0.05),
+    0 8px 20px -10px rgb(30 47 92 / 0.22);
+}
+@utility surface-hover {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-karyalo-green) 55%, transparent),
+    0 2px 4px rgb(30 47 92 / 0.06),
+    0 14px 28px -12px rgb(30 47 92 / 0.3);
+}
+
+/* Every product tile shares the game cards' tone: deep navy with a soft
+   highlight, never a saturated blue. */
+@utility tile-navy {
+  background:
+    radial-gradient(circle at 18% 12%, rgb(255 255 255 / 0.14), transparent 55%),
+    linear-gradient(135deg, var(--color-deep-pine) 0%, var(--color-night) 100%);
+}
+
+/* The square behind a brand logo: the border grey (#dce2ea) warmed up towards
+   soft sand, so logos never sit on a stark white patch. Logo files are transparent. */
+@utility logo-tile {
+  background: linear-gradient(160deg, #efe9df 0%, #e3e3e6 45%, #dce2ea 100%);
 }
 
 .row-scroller {
@@ -58,3 +88,10 @@ body {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* Promo carousel: the active dot fills over the autoplay interval. */
+@keyframes promo-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+[style*="promo-progress"] { transform-origin: left; }

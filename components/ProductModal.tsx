@@ -105,7 +105,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
           <div className="absolute inset-x-5 bottom-3 flex items-end gap-4 sm:inset-x-8">
             {product.image && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={product.image} alt="" aria-hidden="true" className={`size-20 shrink-0 rounded-2xl bg-white shadow-xl ${product.logo ? "object-contain p-1" : "object-cover"} ring-2 ring-warm-white sm:size-24`} />
+              <img src={product.image} alt="" aria-hidden="true" className={`size-20 shrink-0 rounded-2xl shadow-xl ${product.logo ? "logo-tile object-contain p-2" : "object-cover"} ring-2 ring-warm-white sm:size-24`} />
             )}
             <h2 id="product-title" className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{product.name}</h2>
           </div>
@@ -131,7 +131,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
                     <label
                       key={x.id}
                       className={`flex cursor-pointer flex-col gap-0.5 rounded-xl border p-3 text-left transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-karyalo-green has-[:focus-visible]:ring-offset-2 ${
-                        selected ? "border-karyalo-green bg-soft-sage ring-1 ring-karyalo-green" : "border-border bg-white hover:border-karyalo-green/50"
+                        selected ? "border-karyalo-green bg-soft-sage ring-1 ring-karyalo-green" : "border-deep-pine/15 bg-white hover:border-karyalo-green/60"
                       }`}
                     >
                       <input type="radio" name="nominal" value={x.id} checked={selected} onChange={() => setNominalId(x.id)} className="sr-only" />
@@ -156,7 +156,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
             </fieldset>
 
             <fieldset>
-              <legend className="mb-1 text-sm font-bold text-ink">2. Isi {target.label.toLowerCase()}</legend>
+              <legend className="mb-1 text-sm font-bold text-ink">2. Isi {target.label.replace(/^\w/, (c) => c.toLowerCase())}</legend>
               <p className="mb-2 text-xs text-muted">{target.hint}</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {target.fields.map((f) => {
@@ -171,7 +171,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
                         onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
                         placeholder={f.key === "phone" ? "08xxxxxxxxxx" : ""}
                         aria-invalid={invalid}
-                        className={`h-11 rounded-xl border bg-white px-3 text-sm text-ink tabular-nums focus:outline-none focus:ring-2 focus:ring-karyalo-green ${invalid ? "border-status-critical" : "border-border"}`}
+                        className={`h-11 rounded-xl border bg-white px-3 text-sm text-ink tabular-nums focus:outline-none focus:ring-2 focus:ring-karyalo-green ${invalid ? "border-status-critical" : "border-deep-pine/20"}`}
                       />
                       {invalid && <span className="text-xs text-status-critical">Minimal {f.minLength} digit.</span>}
                     </label>
@@ -182,7 +182,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
           </div>
 
           {/* Summary */}
-          <aside className="flex flex-col gap-3 self-start rounded-2xl border border-border bg-soft-sand/60 p-4 sm:sticky sm:top-4">
+          <aside className="flex flex-col gap-3 self-start rounded-2xl border border-deep-pine/10 bg-soft-sand p-4 sm:sticky sm:top-4">
             <h3 className="text-sm font-bold text-ink">Ringkasan</h3>
             <dl className="flex flex-col gap-1.5 text-[13px]">
               <div className="flex justify-between gap-2"><dt className="text-muted">Produk</dt><dd className="text-right font-medium text-ink">{product.name}</dd></div>
@@ -216,7 +216,7 @@ function ProductDialog({ product, initialNominal, onClose }: { product: Product;
                     value={voucher}
                     onChange={(e) => { setVoucher(e.target.value.toUpperCase()); setVoucherNote(null); }}
                     autoComplete="off"
-                    className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-white px-2.5 text-xs uppercase tracking-wide text-ink focus:outline-none focus:ring-2 focus:ring-karyalo-green"
+                    className="h-9 min-w-0 flex-1 rounded-lg border border-deep-pine/20 bg-white px-2.5 text-xs uppercase tracking-wide text-ink focus:outline-none focus:ring-2 focus:ring-karyalo-green"
                   />
                   <button
                     type="button"

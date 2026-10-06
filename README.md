@@ -17,8 +17,10 @@ palet dan token mengikuti Karyalo Design System):
 - **Billboard** — satu produk unggulan dengan aksi *Top up sekarang* / *Info lengkap*.
 - **Flash Sale** — sesi harian (00.00 / 12.00 / 18.00) dengan hitung mundur, harga
   coret, dan bar kuota terjual. Harga flash dipakai juga di panel detail.
-- **Banner promo** — kartu iklan 2:1 (pola banner DeliaStore: teks kiri, susunan
-  gambar game kanan), digambar dengan kode sehingga tetap tajam dan mudah diubah.
+- **Slider promo** di paling atas — 5 slide, ganti otomatis tiap 10 detik, bisa digeser
+  (swipe, drag mouse, panah, titik) dan dijeda. Gambar latar di `public/banners/`:
+  `<id>.webp` (21:9, dari 640px ke atas) dan `<id>-mobile.webp` (persegi, untuk HP);
+  sumber aslinya di `picture/slider/`.
 - **Baris geser** — *Beli lagi*, *Top Up Game*, *Top 10 hari ini* (angka besar),
   *Game baru*, satu baris per kategori lain, dan *Promo minggu ini*.
 - **Panel detail** — pilihan nominal, isian target sesuai jenis produk (User ID +

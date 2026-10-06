@@ -23,14 +23,34 @@ export function Navbar() {
   const [query, setQuery] = useState("");
   const [bellOpen, setBellOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const sentinel = useRef<HTMLSpanElement>(null);
+  const bellRef = useRef<HTMLDivElement>(null);
   const { open } = useProductModal();
 
+  // Solid once the top 24px of the page has scrolled away.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const el = sentinel.current;
+    if (!el) return;
+    setScrolled(window.scrollY > 24); // pages opened mid-way, e.g. /#flash-sale
+    const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
+
+  // The notification panel closes on an outside click or Escape.
+  useEffect(() => {
+    if (!bellOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!bellRef.current?.contains(e.target as Node)) setBellOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setBellOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [bellOpen]);
 
   useEffect(() => {
     if (searchOpen) inputRef.current?.focus();
@@ -50,10 +70,12 @@ export function Navbar() {
   const solid = scrolled || searchOpen || pathname !== "/";
 
   return (
+    <>
+    <span ref={sentinel} aria-hidden="true" className="pointer-events-none absolute left-0 top-0 h-6 w-px" />
     <header className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${solid ? "bg-night shadow-lg shadow-night/20" : "bg-gradient-to-b from-night/80 to-transparent"}`}>
       <div className="flex h-16 items-center gap-6 px-4 sm:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Karyalo PPOB, beranda">
-          <Image src="/logo.png" alt="" width={30} height={30} className="rounded-md bg-white p-0.5" />
+          <Image src="/logo.png" alt="" width={114} height={160} priority className="h-8 w-auto" />
           <span className="text-[15px] font-extrabold tracking-tight text-white">Karyalo <span className="text-accent-cyan">PPOB</span></span>
         </Link>
 
@@ -77,7 +99,7 @@ export function Navbar() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Escape" && closeSearch()}
-                placeholder="Game, operator, e-money…"
+                placeholder="Cari game atau operator"
                 aria-label="Cari produk"
                 className="w-36 bg-transparent text-sm text-white placeholder:text-white/50 focus:outline-none sm:w-60"
               />
@@ -90,7 +112,7 @@ export function Navbar() {
               <Search size={19} />
             </button>
           )}
-          <div className="relative">
+          <div ref={bellRef} className="relative">
             <button
               type="button"
               onClick={() => setBellOpen((o) => !o)}
@@ -149,5 +171,6 @@ export function Navbar() {
         </div>
       )}
     </header>
+    </>
   );
 }

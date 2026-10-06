@@ -354,8 +354,6 @@ export const RECENT_PURCHASES: { slug: string; nominalId: string; target: string
   { slug: "dana", nominalId: "dana-50", target: "0857****1290", whenLabel: "2 minggu lalu" },
 ];
 
-/** Produk unggulan di billboard beranda. */
-export const FEATURED_SLUG = "mobile-legends";
 
 /* ------------------------------------------------------------------ */
 /* Flash sale — sama konsepnya dengan Promo DeliaStore: jadwal + kuota. */
@@ -410,6 +408,7 @@ export const earnablePoints = (amount: number) => Math.floor(amount * POINTS_RAT
 /* Banner promo beranda (DeliaStore: 1600×800, teks kiri, visual kanan). */
 /* ------------------------------------------------------------------ */
 
+/** Latar tiap slide ada di /public/banners: <id>.webp (21:9) dan <id>-mobile.webp (persegi). */
 export interface PromoBanner {
   id: string;
   eyebrow: string;
@@ -419,47 +418,35 @@ export interface PromoBanner {
   body: string;
   cta: string;
   href: string;
-  /** Slug produk yang gambarnya disusun di sisi kanan. */
-  showcase: string[];
-  tone: { from: string; to: string };
-  sticker?: string;
+  /** Warna aksen judul bila cyan bentrok dengan gambarnya. */
+  accent?: string;
 }
 
 export const PROMO_BANNERS: PromoBanner[] = [
   {
     id: "games", eyebrow: "Top up game", title: "Diamond murah,", highlight: "push rank lancar.",
-    body: "Mobile Legends, Free Fire, PUBG Mobile, Genshin — tinggal masukkan ID, diamond masuk otomatis.",
+    body: "Mobile Legends, Free Fire, PUBG Mobile, dan Genshin. Masukkan ID, diamond masuk otomatis.",
     cta: "Top up sekarang", href: "/kategori/game",
-    showcase: ["mobile-legends", "free-fire", "pubg-mobile", "genshin-impact"],
-    tone: { from: "#1e2f5c", to: "#1e5aa8" }, sticker: "Mulai belasan ribu",
   },
   {
     id: "flash", eyebrow: "Flash sale harian", title: "Harga coret tiap sesi,", highlight: "kuota terbatas.",
-    body: "Sesi baru tiap pukul 00.00, 12.00, dan 18.00. Siapa cepat, dia dapat.",
-    cta: "Lihat flash sale", href: "/#flash-sale",
-    showcase: ["magic-chess-go-go", "honor-of-kings", "delta-force"],
-    tone: { from: "#5c1f14", to: "#a5482d" }, sticker: "Sisa kuota terbatas",
+    body: "Sesi baru dibuka pukul 00.00, 12.00, dan 18.00.",
+    cta: "Lihat flash sale", href: "/#flash-sale", accent: "#f7a26c",
   },
   {
     id: "game-baru", eyebrow: "Baru di Karyalo", title: "Game baru,", highlight: "langsung bisa top up.",
     body: "Free Fire MAX, Magic Chess: Go Go, Honor of Kings, dan Delta Force sudah tersedia.",
     cta: "Lihat game baru", href: "/#game-baru",
-    showcase: ["free-fire-max", "magic-chess-go-go", "delta-force", "honor-of-kings"],
-    tone: { from: "#111b36", to: "#2a6f64" },
   },
   {
-    id: "member", eyebrow: "Member Karyalo", title: "Tiap top up", highlight: "jadi poin.",
-    body: `Login pakai nomor WhatsApp, kumpulkan 1% poin tiap transaksi. 1 poin = Rp1, berlaku ${POINTS_EXPIRY_DAYS} hari.`,
-    cta: "Mulai top up", href: "/kategori/game",
-    showcase: ["call-of-duty-mobile", "genshin-impact", "free-fire"],
-    tone: { from: "#1e2f5c", to: "#2fc1d6" }, sticker: "Segera hadir",
+    id: "member", eyebrow: "Segera hadir", title: "Tiap top up", highlight: "jadi poin.",
+    body: `Masuk dengan nomor WhatsApp, dapat poin 1% tiap transaksi. 1 poin = Rp1, berlaku ${POINTS_EXPIRY_DAYS} hari.`,
+    cta: "Top up sekarang", href: "/kategori/game",
   },
   {
-    id: "utilitas", eyebrow: "Pulsa · Data · PLN", title: "Kebutuhan bulanan,", highlight: "sekali klik.",
+    id: "utilitas", eyebrow: "Pulsa, data, dan PLN", title: "Kebutuhan bulanan,", highlight: "sekali bayar.",
     body: "Pulsa semua operator, token PLN, dan saldo e-wallet masuk dalam hitungan detik.",
-    cta: "Isi pulsa & token", href: "/kategori/pulsa-data",
-    showcase: ["telkomsel", "token-pln", "dana", "xl"],
-    tone: { from: "#111b36", to: "#1e5aa8" },
+    cta: "Isi pulsa", href: "/kategori/pulsa-data",
   },
 ];
 
